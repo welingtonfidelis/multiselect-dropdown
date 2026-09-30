@@ -16,6 +16,10 @@
   group and disappeared from the list — taking the group header with it when
   it was the only item. The controller's copy is rendered, so the selected
   state shown is the live one.
+- **Single-select close after the widget is gone**: the close deferred to the
+  next frame now checks `mounted`. A parent that rebuilds the field with a key
+  derived from the selected value swaps it out on that same tap, and the close
+  then hit a disposed controller ("was used after being disposed").
 
 ## 3.2.2
 
