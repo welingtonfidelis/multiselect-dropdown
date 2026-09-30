@@ -151,6 +151,47 @@ void main() {
       controller.dispose();
     });
 
+    testWidgets('a selected item stays in its group, marked as selected',
+        (tester) async {
+      final controller = MultiSelectController<int>();
+      await tester.pumpWidget(
+        buildTestApp(
+          MultiDropdown<int>(
+            items: const [],
+            groups: [
+              DropdownGroup(
+                label: 'Fruits',
+                items: [DropdownItem(label: 'Apple', value: 1)],
+              ),
+              DropdownGroup(
+                label: 'Vegetables',
+                items: [DropdownItem(label: 'Carrot', value: 3)],
+              ),
+            ],
+            controller: controller,
+          ),
+        ),
+      );
+
+      await tester.tap(find.byType(InkWell));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Apple'));
+      await tester.pumpAndSettle();
+
+      // The groups still hold the unselected copy of Apple; the list has to
+      // show the controller's copy, or the group loses its only item.
+      expect(find.text('Fruits'), findsOneWidget);
+
+      final apple = find.ancestor(
+        of: find.text('Apple').last,
+        matching: find.byType(ListTile),
+      );
+      expect(tester.widget<ListTile>(apple).selected, isTrue);
+
+      controller.dispose();
+    });
+
     // =========================================================================
     // Controller selectAll works across groups
     // =========================================================================

@@ -125,11 +125,20 @@ class _DropdownState<T> extends State<_Dropdown<T>>
   List<_GroupEntry<T>> _buildGroupEntries() {
     if (!_isGrouped) return [];
 
-    final visibleItemSet = widget.items.toSet();
+    // Matched by value, not by `==`: item equality includes `selected`, so
+    // once the controller toggles an item its copy no longer equals the one
+    // held by the group, and the item would drop out of its section. The
+    // controller's copy is the one rendered, as it carries the live state.
+    final visibleByValue = {
+      for (final item in widget.items) item.value: item,
+    };
     final entries = <_GroupEntry<T>>[];
 
     for (final group in widget.groups!) {
-      final visibleItems = group.items.where(visibleItemSet.contains).toList();
+      final visibleItems = group.items
+          .map((item) => visibleByValue[item.value])
+          .whereType<DropdownItem<T>>()
+          .toList();
       if (visibleItems.isEmpty) continue;
 
       entries.add(_GroupEntry<T>.header(group.label));

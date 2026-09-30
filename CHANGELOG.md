@@ -8,6 +8,15 @@
   Elevation alone does not separate the panel from content that shares its
   background colour. Defaults to `null`, so existing panels are unchanged.
 
+### Bug Fixes
+
+- **Grouped items losing their section on selection**: group entries are now
+  matched to the controller's items by `value` instead of `==`. Equality
+  includes `selected`, so a toggled item stopped matching the copy held by its
+  group and disappeared from the list — taking the group header with it when
+  it was the only item. The controller's copy is rendered, so the selected
+  state shown is the live one.
+
 ## 3.2.2
 
 ### Changed
